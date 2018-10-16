@@ -19,9 +19,9 @@ class VictimCache: public Cache{
 
 public:
     VictimCache(unsigned long size, unsigned long associativity, unsigned long blockSize);
-    cache_interface swap(memory_address memory_address1, char rw, bool dirtyBit);
-    cache_interface rwCache(unsigned long int memoryAddress, char rw, unsigned long int memoryAddress2, char rw2,  bool dirtyBit);
-    cache_interface evictLRU(memory_address memory_address1,  char rw);
+    cache_interface swap(memory_address memory_address1, bool dirtyBit);
+    cache_interface rwCache(unsigned long int memoryAddress, unsigned long int memoryAddress2,  bool dirtyBit);
+    cache_interface evictLRU(memory_address memory_address1,  bool evictedDirtyBit);
 };
 
 

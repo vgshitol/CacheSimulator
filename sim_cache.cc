@@ -96,15 +96,15 @@ int main (int argc, char* argv[])
 #if 1
     while(fscanf(FP, "%s %lx", str, &addr) != EOF)
     {
-        cache_interface cacheInterface1;
+        cache_interface cacheInterface1, cacheInterface2;
         cache_interface victim_cache_interface;
         rw = str[0];
         if (rw == 'r'){
-            printf("%s %lx\n", "read", addr);           // Print and test if file is read correctly
+//            printf("%s %lx\n", "read", addr);           // Print and test if file is read correctly
             cacheInterface1 = l1.rwCache(addr, rw);
         }
         else if (rw == 'w'){
-            printf("%s %lx\n", "write", addr);          // Print and test if file is read correctly
+//            printf("%s %lx\n", "write", addr);          // Print and test if file is read correctly
             cacheInterface1 = l1.rwCache(addr, rw);
         }
 
@@ -112,8 +112,8 @@ int main (int argc, char* argv[])
             case VICTIMCACHEL1NOL2: {
                 if(cacheInterface1.evictionFlag) {
 //                    cout << "Address Evicted from Cache: " << hex << cacheInterface1.evictedMemoryAddress << dec <<  endl;
-                        victim_cache_interface = vc1.rwCache(addr, rw, cacheInterface1.evictedMemoryAddress, cacheInterface1.rw, cacheInterface1.dirtyBit);
-                            l1.swapData(victim_cache_interface);
+                        victim_cache_interface = vc1.rwCache(addr, cacheInterface1.evictedMemoryAddress, cacheInterface1.dirtyBit);
+                        l1.swapData(victim_cache_interface, rw);
                 }
                 break;
             }
@@ -130,27 +130,28 @@ int main (int argc, char* argv[])
 
             case VICTIMCACHEL1ANDL2:
             {
+
                 if(cacheInterface1.evictionFlag) {
 //                    cout << "Address Evicted from Cache: " << hex << cacheInterface1.evictedMemoryAddress << dec <<  endl;
-                    victim_cache_interface = vc1.rwCache(addr, rw, cacheInterface1.evictedMemoryAddress, cacheInterface1.rw, cacheInterface1.dirtyBit);
-                    l1.swapData(victim_cache_interface);
-
-                    if((victim_cache_interface.evictionFlag) && (victim_cache_interface.dirtyBit)){
-                        l2.rwCache(cacheInterface1.evictedMemoryAddress, 'w');
-                    }
+                    victim_cache_interface = vc1.rwCache(addr,cacheInterface1.evictedMemoryAddress, cacheInterface1.dirtyBit);
+                    cacheInterface2.cacheHit = l1.swapData(victim_cache_interface, rw);
                 }
-                if(!cacheInterface1.cacheHit) {
+
+
+                if((victim_cache_interface.evictionFlag) && (victim_cache_interface.dirtyBit)){
+                    cout << hex <<  victim_cache_interface.evictedMemoryAddress << ":   " << victim_cache_interface.dirtyBit << endl;
+                    l2.rwCache(victim_cache_interface.evictedMemoryAddress, 'w');
+                }
+
+
+                if(!cacheInterface2.cacheHit && !cacheInterface1.cacheHit) {
                     l2.rwCache(addr, 'r');
                 }
+
                 break;
             }
             default: break;
         }
-
-      /*************************************
-                  Add cache code here
-        **************************************/
-
 
     }
 #endif
@@ -188,8 +189,7 @@ int main (int argc, char* argv[])
     cout << "L1 Read Miss: " << l1.getPerformanceParameters().cacheReadMiss << endl;
     cout << "L1 Write Hits: " << l1.getPerformanceParameters().cacheWriteHits + l1.getPerformanceParameters().cacheWriteMiss << endl;
     cout << "L1 Write Miss: " << l1.getPerformanceParameters().cacheWriteMiss << endl;
-
-
+    cout << "L1 Evictions: " << l1.getPerformanceParameters().evictions << endl;
     cout << "VC Swap Requests: " << vc1.getPerformanceParameters().swapRequests << endl;
     cout << "VC Hits: " << vc1.getPerformanceParameters().cacheHits << endl;
     cout << "VC Swaps: " << vc1.getPerformanceParameters().swaps << endl;

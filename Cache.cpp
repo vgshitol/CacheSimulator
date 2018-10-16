@@ -74,7 +74,7 @@ bool Cache::lookForMatchInSet(memory_address * memory_address1) {
             (*memory_address1).assocIndex = assoc;
         }
     }
-    cout << " Cache Match Index : " <<  (*memory_address1).assocIndex << " With Tag " << hex <<  (*memory_address1).tag<< dec << " Match Value" << match << endl;
+
     return match;
 }
 
@@ -83,7 +83,7 @@ void Cache::updateRecencyNumber(unsigned long int setIndex, unsigned long int as
         if(this->tags[setIndex][assoc].leastRecentlyUsed < this->tags[setIndex][assocIndex].leastRecentlyUsed){
             this->tags[setIndex][assoc].leastRecentlyUsed++;
         }
-//        cout << "Recency Number: " << setIndex << " " << assoc << " " << this->tags[setIndex][assoc].leastRecentlyUsed << endl;
+
     }
     this->tags[setIndex][assocIndex].leastRecentlyUsed = 0; /** Update the MRU Block Recency Number **/
 
@@ -93,16 +93,26 @@ const PerformanceParameters &Cache::getPerformanceParameters() const {
     return performanceParameters;
 }
 
+/**
+ *
+ */
 void Cache::displayTags() {
+    unsigned long int temp = 0;
+    bool dirtyBit = 0;
     for(unsigned long int setIndex = 0; setIndex < this->tags.size(); setIndex++){
         cout << "set  " << setIndex << ": ";
         for (int assoc = 0; assoc < this->tags[setIndex].size(); ++assoc) {
-            cout << hex << this->tags[setIndex][assoc].tag << " " <<  this->tags[setIndex][assoc].dirtyBit << " "  ;
+             cout << hex << this->tags[setIndex][assoc].tag << " " <<  this->tags[setIndex][assoc].dirtyBit << " "  ;
         }
         cout << dec <<endl;
     }
 }
 
+/**
+ *
+ * @param memory_address1
+ * @return
+ */
 unsigned long int Cache::makeAddress(memory_address memory_address1) {
     unsigned long int address;
     address = memory_address1.tag;
@@ -167,7 +177,6 @@ cache_interface Cache::evictLRU(memory_address memory_address1,  char rw) {
         performanceParameters.evictions++;
 
         cacheInterface1.evictionFlag = true;
-        cacheInterface1.isValidBitZero = false;
         memory_address memory_address2;
         memory_address2 = memory_address1;
         memory_address2.tag = this->tags[memory_address1.setIndex][memory_address1.assocIndex].tag;
@@ -178,7 +187,6 @@ cache_interface Cache::evictLRU(memory_address memory_address1,  char rw) {
 
         this->tags[memory_address1.setIndex][memory_address1.assocIndex].dirtyBit = false; /** Set the Dirty Bit false as you are evicting this tag and a new
              tag will be replaced who will have its own dirty bit policy  **/
-        cout << "Eviction: " << hex << cacheInterface1.evictedMemoryAddress << dec << " Flag : " << cacheInterface1.evictionFlag << endl;
     }
 
     this->tags[memory_address1.setIndex][memory_address1.assocIndex].tag = memory_address1.tag; /** update the new tag with new memory address**/
@@ -194,10 +202,9 @@ cache_interface Cache::evictLRU(memory_address memory_address1,  char rw) {
 }
 
 cache_interface Cache::rwCache(unsigned long int memoryAddress, char rw) {
-    cout << "#" << getPerformanceParameters().cacheHits << ": ";
-    rw == 'w' ? cout << "write " : cout << "read " ;
-    cout << hex << memoryAddress << endl;
 
+    this->countCacheEntry = this->countCacheEntry+1;
+//    cout << "#" << this->countCacheEntry << ": " << rw << hex << memoryAddress << dec << endl;
     cache_interface cacheInterface1;
     memory_address mem_add_split;
 
@@ -218,7 +225,7 @@ cache_interface Cache::rwCache(unsigned long int memoryAddress, char rw) {
     return cacheInterface1;
 }
 
-bool Cache::swapData(cache_interface cacheInterface1) {
+bool Cache::swapData(cache_interface cacheInterface1, char rw) {
 
     if(!cacheInterface1.swapFlag)
         return false;
@@ -232,30 +239,13 @@ bool Cache::swapData(cache_interface cacheInterface1) {
     if(lookForMatchInSet(&mem_add_split)) {
         /** We got a cache hit**/
         this->tags[mem_add_split.setIndex][mem_add_split.assocIndex].tag = mem_add_split.tag; /** update the new tag with new memory address**/
-        if(!cacheInterface1.swapDirtyBit && cacheInterface1.rw == 'w')
+        this->tags[mem_add_split.setIndex][mem_add_split.assocIndex].dirtyBit = cacheInterface1.swapDirtyBit;
+        if( rw == 'w')
             this->tags[mem_add_split.setIndex][mem_add_split.assocIndex].dirtyBit = true;
-        else
-            this->tags[mem_add_split.setIndex][mem_add_split.assocIndex].dirtyBit = cacheInterface1.swapDirtyBit;
+
     }
 
     return true;
-}
-
-bool Cache::isValidBitZero(unsigned long int memoryAddress) {
-    /**
-     * Check if all the blocks in a set are filled . Even if a single block is empty
-     * fill in that spot with the recent address
-     */
-    bool isValidBitZero = false;
-    unsigned long int setIndex = ((1 << this->bitsOffset.indexBits) - 1) & (memoryAddress >> this->bitsOffset.blockOffsetBits);
-
-    for (unsigned long int assoc = 0; assoc < this->associativity; assoc++){
-        if(!this->tags[setIndex][assoc].validBit){
-            isValidBitZero = true;
-            break;
-        }
-    }
-    return isValidBitZero;
 }
 
 char Cache::dirtyBit2Char(bool dirtyBit) {

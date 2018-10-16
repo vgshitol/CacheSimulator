@@ -21,7 +21,6 @@ typedef struct cacheInterface{
     bool swapFlag = false;
     bool swapDirtyBit = false;
     unsigned long int swapMemoryAddress;
-    bool isValidBitZero;
     char rw;
 }cache_interface;
 
@@ -38,11 +37,12 @@ typedef struct memoryAddress{
     unsigned long int setIndex = 0;
     unsigned long int assocIndex = 0;
     unsigned long int blockOffset = 0;
-
 }memory_address;
 
 
 class Cache {
+public:
+    unsigned long int countCacheEntry;
 private:
     /** get the structure of cache by realising the following parameters **/
     unsigned long int size;
@@ -80,15 +80,13 @@ public:
 
     cache_interface rwCache(unsigned long int memoryAddress, char rw = 'r');
     unsigned long int makeAddress(memory_address memory_address1);
-    bool swapData(cache_interface cacheInterface1);
-    bool isValidBitZero(unsigned long int memoryAddress);
+    bool swapData(cache_interface cacheInterface1, char rw);
     char dirtyBit2Char(bool dirtyBit);
 
 private:
     void setSets(void);
     void assignArrayValues(void);
     void setBits(void);
-
 };
 
 

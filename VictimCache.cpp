@@ -18,11 +18,9 @@ VictimCache::VictimCache(unsigned long size, unsigned long associativity, unsign
  * After Detecting a Hit in Victim Cache Call this method to substitute
  * the hit address with the evicted address along with its dirty Bit
  */
-cache_interface VictimCache::swap(memory_address memory_address1, char rw, bool dirtyBit){
+cache_interface VictimCache::swap(memory_address memory_address1, bool dirtyBit){
 
     this->performanceParameters.cacheHits++;
-    if(rw == 'r') this->performanceParameters.cacheReadHits++;
-    else if(rw == 'w') this->performanceParameters.cacheWriteHits++;
 
     /**
      * Store the Swap Data in the Memory Address Details Structure
@@ -33,15 +31,13 @@ cache_interface VictimCache::swap(memory_address memory_address1, char rw, bool 
     memory_address2 = memory_address1;
     memory_address2.tag = this->tags[memory_address1.setIndex][memory_address1.assocIndex].tag;
 
-    this->tags[memory_address1.setIndex][memory_address1.assocIndex].tag = 0;
-    this->tags[memory_address1.setIndex][memory_address1.assocIndex].validBit = false;
-    this->tags[memory_address1.setIndex][memory_address1.assocIndex].dirtyBit = false;
-
     cacheInterface1.swapMemoryAddress = this->makeAddress(memory_address2);
-    cout << " Swapped Address is : " << cacheInterface1.swapMemoryAddress;
     cacheInterface1.swapDirtyBit = this->tags[memory_address1.setIndex][memory_address1.assocIndex].dirtyBit;
     cacheInterface1.swapFlag = true;
 
+    this->tags[memory_address1.setIndex][memory_address1.assocIndex].tag = 0;
+    this->tags[memory_address1.setIndex][memory_address1.assocIndex].validBit = false;
+    this->tags[memory_address1.setIndex][memory_address1.assocIndex].dirtyBit = false;
     /**
      * Memory Address Structure Details To be Loaded in the Cache
      */
@@ -61,7 +57,7 @@ cache_interface VictimCache::swap(memory_address memory_address1, char rw, bool 
  * @param rw
  * @return
  */
-cache_interface VictimCache::rwCache(unsigned long int currentMemoryAddress, char rw, unsigned long int evictedMemoryAddress, char evicted_rw, bool dirtyBit) {
+cache_interface VictimCache::rwCache(unsigned long int currentMemoryAddress, unsigned long int evictedMemoryAddress, bool evictedDirtyBit) {
 
     memory_address mem_add_split, evicted_mem_add_split;
     cache_interface cacheInterface1;
@@ -79,28 +75,21 @@ cache_interface VictimCache::rwCache(unsigned long int currentMemoryAddress, cha
         performanceParameters.swaps++;
         evicted_mem_add_split.assocIndex = mem_add_split.assocIndex;
         /** We got a cache hit**/
-        return this->swap(evicted_mem_add_split,  evicted_rw, dirtyBit);
+        return this->swap(evicted_mem_add_split, evictedDirtyBit);
     }
 
     /** No Cache Hit we have to replace the LRU so get the LRU Index **/
-    cacheInterface1 = this->evictLRU(evicted_mem_add_split, evicted_rw);
+    cacheInterface1 = this->evictLRU(evicted_mem_add_split, evictedDirtyBit);
 
     return cacheInterface1;
 }
 
-cache_interface VictimCache::evictLRU(memory_address memory_address1, char rw) {
+cache_interface VictimCache::evictLRU(memory_address memory_address1, bool evictedDirtyBit) {
 
     cache_interface cacheInterface1 = cache_interface();
-//
-//    if(lookForMatchInSet(&memory_address1)){
-//        /** We got a cache hit**/
-//         cacheInterface1.cacheHit = true;
-//         cacheInterface1.evictionFlag = false;
-//        return cacheInterface1;
-//
-//    }
 
     memory_address1.assocIndex = findLRUIndex(memory_address1.setIndex); /** find the Least Recently Used index **/
+    cacheInterface1.evictionFlag = false;
 
     /**
      * Check if all the blocks in a set are filled . Even if a single block is empty
@@ -118,7 +107,6 @@ cache_interface VictimCache::evictLRU(memory_address memory_address1, char rw) {
         performanceParameters.evictions++;
 
         cacheInterface1.evictionFlag = true;
-        cacheInterface1.isValidBitZero = false;
         memory_address memory_address2;
         memory_address2 = memory_address1;
         memory_address2.tag = this->tags[memory_address1.setIndex][memory_address1.assocIndex].tag;
@@ -129,15 +117,13 @@ cache_interface VictimCache::evictLRU(memory_address memory_address1, char rw) {
 
         this->tags[memory_address1.setIndex][memory_address1.assocIndex].dirtyBit = false; /** Set the Dirty Bit false as you are evicting this tag and a new
              tag will be replaced who will have its own dirty bit policy  **/
-        cout << "Eviction: " << hex << cacheInterface1.evictedMemoryAddress << dec << " Flag : " << cacheInterface1.evictionFlag << endl;
+
     }
 
     this->tags[memory_address1.setIndex][memory_address1.assocIndex].tag = memory_address1.tag; /** update the new tag with new memory address**/
     this->tags[memory_address1.setIndex][memory_address1.assocIndex].validBit = true;
+    this->tags[memory_address1.setIndex][memory_address1.assocIndex].dirtyBit = evictedDirtyBit;
 
-    if((rw == 'w') && (!this->tags[memory_address1.setIndex][memory_address1.assocIndex].dirtyBit)){ // Write Operation Successful
-        this->tags[memory_address1.setIndex][memory_address1.assocIndex].dirtyBit = true;
-    }
 
     updateRecencyNumber(memory_address1.setIndex,memory_address1.assocIndex);
 
