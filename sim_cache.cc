@@ -94,7 +94,6 @@ int main (int argc, char* argv[])
     VictimCache vc1(params.vc_num_blocks*params.block_size, params.vc_num_blocks, params.block_size);
     Cache l2(params.l2_size, params.l2_assoc, params.block_size);
 
-#if 1
     while(fscanf(FP, "%s %lx", str, &addr) != EOF)
     {
         cache_interface cacheInterface1, cacheInterface2;
@@ -153,48 +152,24 @@ int main (int argc, char* argv[])
         }
 
     }
-#endif
-//    cache_interface cacheInterface1;
-//
-//    l1.displayValues();
-//    cacheInterface1 = l1.rwCache(0x12345678, 'w');
-//    cacheInterface1 = l1.rwCache(0x13345678 , 'w');
-//    cacheInterface1 = l1.rwCache(0x13445678);
-//    cacheInterface1 = l1.rwCache(0x12245678);
-//    cacheInterface1 = l1.rwCache(0x12247678);
-//    cacheInterface1 = l1.rwCache(0x13349678 , 'r');
-//    cacheInterface1 = l1.rwCache(0x13345678);
-//    cacheInterface1 = l1.rwCache(0x12345678);
-//    cacheInterface1 = l1.rwCache(0x5678, 'w');
-//    cacheInterface1 = l1.rwCache(0x3678, 'w');
-//    cacheInterface1 = l1.rwCache(0xf478);
-//    cacheInterface1 = l1.rwCache(0x2355);
-//    cacheInterface1 = l1.rwCache(0x3262);
-//    cacheInterface1 = l1.rwCache(0x4626, 'r');
-//    cacheInterface1 = l1.rwCache(0x6236);
-//    cacheInterface1 = l1.rwCache(0x2358);
-//    l2.displayValues();
-//    l2.rwCache(0x12345678);
-//    l2.rwCache(0x13345678);
-//    l2.rwCache(0x13445678);
-//    l2.rwCache(0x12245678);
-//    l2.rwCache(0x13345678);
-//    l1.displayValues();
 
     unsigned int totalReadsL1 = l1.getPerformanceParameters().cacheReadHits + l1.getPerformanceParameters().cacheReadMiss;
     unsigned int totalWritesL1 = l1.getPerformanceParameters().cacheWriteHits + l1.getPerformanceParameters().cacheWriteMiss;
     unsigned int totalRequests = totalReadsL1 + totalWritesL1;
     float srr = 0;
-    float mrL1VC = 0 ;
+    float  mrL1VC = (l1.getPerformanceParameters().cacheReadMiss + l1.getPerformanceParameters().cacheWriteMiss)/ (float)totalRequests ;
+    float mrL2 = 0;
+    unsigned int wbL1VC = l1.getPerformanceParameters().writeBack;
     unsigned int totalReadsL2 = 0;
     unsigned int  totalWritesL2 = 0;
     unsigned int totalRequestsL2 = 0;
-    unsigned int totalMemoryTraffic = l1.getPerformanceParameters().cacheReadMiss + l1.getPerformanceParameters().cacheWriteMiss;
+    unsigned int totalMemoryTraffic = l1.getPerformanceParameters().cacheReadMiss + l1.getPerformanceParameters().cacheWriteMiss + l1.getPerformanceParameters().writeBack;
     switch (cacheStructure1){
         case VICTIMCACHEL1NOL2: {
             srr = l1.getPerformanceParameters().evictions / (float)totalRequests;
             mrL1VC = (l1.getPerformanceParameters().cacheReadMiss + l1.getPerformanceParameters().cacheWriteMiss -  vc1.getPerformanceParameters().swaps)/ (float)totalRequests ;
-            totalMemoryTraffic = totalMemoryTraffic - vc1.getPerformanceParameters().swaps + l1.getPerformanceParameters().writeBack;
+            wbL1VC = vc1.getPerformanceParameters().writeBack;
+            totalMemoryTraffic = totalMemoryTraffic - vc1.getPerformanceParameters().swaps - l1.getPerformanceParameters().writeBack + vc1.getPerformanceParameters().writeBack;
             break;
         }
         case L2NOVICTIMCACHE:
@@ -202,6 +177,7 @@ int main (int argc, char* argv[])
             totalReadsL2 = l2.getPerformanceParameters().cacheReadHits + l2.getPerformanceParameters().cacheReadMiss;
             totalWritesL2 = l2.getPerformanceParameters().cacheWriteHits + l2.getPerformanceParameters().cacheWriteMiss;
             totalRequestsL2 = totalReadsL2 + totalWritesL2;
+            mrL2 =  l2.getPerformanceParameters().cacheReadMiss / (float)totalReadsL2;
             totalMemoryTraffic = l2.getPerformanceParameters().cacheReadMiss + l2.getPerformanceParameters().cacheWriteMiss + l2.getPerformanceParameters().writeBack;
             break;
         }
@@ -213,6 +189,7 @@ int main (int argc, char* argv[])
             totalReadsL2 = l2.getPerformanceParameters().cacheReadHits + l2.getPerformanceParameters().cacheReadMiss;
             totalWritesL2 = l2.getPerformanceParameters().cacheWriteHits + l2.getPerformanceParameters().cacheWriteMiss;
             totalRequestsL2 = totalReadsL2 + totalWritesL2;
+            mrL2 =  l2.getPerformanceParameters().cacheReadMiss / (float)totalReadsL2;
             totalMemoryTraffic = l2.getPerformanceParameters().cacheReadMiss + l2.getPerformanceParameters().cacheWriteMiss + l2.getPerformanceParameters().writeBack;
             break;
         }
@@ -243,14 +220,14 @@ int main (int argc, char* argv[])
     cout << left << setw(42) << "  f. swap request rate:" << right << setw(10)<< srr << endl;
     cout << left << setw(42) << "  g. number of swaps:" << right << setw(10)<< vc1.getPerformanceParameters().swaps << endl;
     cout << left << setw(42) << "  h. combined L1+VC miss rate:" << right << setw(10)<< mrL1VC << endl;
-    cout << left << setw(42) << "  i. number writebacks from L1/VC:" << right << setw(10)<< totalWritesL2 << endl;
+    cout << left << setw(42) << "  i. number writebacks from L1/VC:" << right << setw(10)<< wbL1VC << endl;
 
     cout << left << setw(42) << "  j. number of L2 reads:" << right << setw(10)<< totalReadsL2 << endl;
     cout << left << setw(42) << "  k. number of L2 read misses:" << right << setw(10)<< l2.getPerformanceParameters().cacheReadMiss << endl;
     cout << left << setw(42) << "  l. number of L2 writes:" << right << setw(10)<< totalWritesL2<< endl;
     cout << left << setw(42) << "  m. number of L2 write misses:" << right << setw(10)<< l2.getPerformanceParameters().cacheWriteMiss << endl;
 
-    cout << left << setw(42) << "  n. L2 miss rate:"<< right << setw(10) <<  l2.getPerformanceParameters().cacheReadMiss / (float)totalReadsL2 << endl;
+    cout << left << setw(42) << "  n. L2 miss rate:"<< right << setw(10) << mrL2 << endl;
     cout << left << setw(42) << "  o. number of writebacks from L2:" << right << setw(10)<< l2.getPerformanceParameters().writeBack << endl;
     cout << left << setw(42) << "  p. total memory traffic:" << right << setw(10)<< totalMemoryTraffic << endl;
 
