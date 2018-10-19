@@ -18,6 +18,7 @@ public:
       unsigned int swapRequests = 0;
       unsigned int swaps = 0;
       unsigned int evictions = 0;
+        unsigned int writeBack = 0;
 };
 
 

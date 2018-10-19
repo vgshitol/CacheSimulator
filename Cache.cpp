@@ -184,6 +184,8 @@ cache_interface Cache::evictLRU(memory_address memory_address1,  char rw) {
         cacheInterface1.dirtyBit = this->tags[memory_address1.setIndex][memory_address1.assocIndex].dirtyBit;
         cacheInterface1.rw = dirtyBit2Char(cacheInterface1.dirtyBit);
 
+        if(cacheInterface1.rw == 'w') performanceParameters.writeBack++;
+
         this->tags[memory_address1.setIndex][memory_address1.assocIndex].dirtyBit = false; /** Set the Dirty Bit false as you are evicting this tag and a new
              tag will be replaced who will have its own dirty bit policy  **/
     }

@@ -5,6 +5,7 @@
 #include "Cache.h"
 #include "VictimCache.h"
 #include <typeinfo>
+#include <iomanip>
 
 using namespace std;
 /*  argc holds the number of command line arguments
@@ -179,6 +180,16 @@ int main (int argc, char* argv[])
 //    l2.rwCache(0x12245678);
 //    l2.rwCache(0x13345678);
 //    l1.displayValues();
+
+    unsigned int totalReadsL1 = l1.getPerformanceParameters().cacheReadHits + l1.getPerformanceParameters().cacheReadMiss;
+    unsigned int totalWritesL1 = l1.getPerformanceParameters().cacheWriteHits + l1.getPerformanceParameters().cacheWriteMiss;
+    unsigned int totalRequests = totalReadsL1 + totalWritesL1;
+    unsigned int totalReadsL2 = l2.getPerformanceParameters().cacheReadHits + l2.getPerformanceParameters().cacheReadMiss;
+    unsigned int totalWritesL2 = l2.getPerformanceParameters().cacheWriteHits + l2.getPerformanceParameters().cacheWriteMiss;
+    unsigned int totalRequestsL2 = totalReadsL2 + totalWritesL2;
+    float srr = l1.getPerformanceParameters().evictions / (float)totalRequests;
+
+    float mrL1VC = (l1.getPerformanceParameters().cacheReadMiss + l1.getPerformanceParameters().cacheWriteMiss -  vc1.getPerformanceParameters().swaps)/ (float)totalRequests ;
     cout << "===== L1 contents =====" << endl;
     l1.reorderTags();
     l1.displayTags();
@@ -190,18 +201,26 @@ int main (int argc, char* argv[])
     cout << "===== L2 contents =====" << endl;
     l2.reorderTags();
     l2.displayTags();
-    cout << "L1 Read Hits: " << l1.getPerformanceParameters().cacheReadHits + l1.getPerformanceParameters().cacheReadMiss << endl;
-    cout << "L1 Read Miss: " << l1.getPerformanceParameters().cacheReadMiss << endl;
-    cout << "L1 Write Hits: " << l1.getPerformanceParameters().cacheWriteHits + l1.getPerformanceParameters().cacheWriteMiss << endl;
-    cout << "L1 Write Miss: " << l1.getPerformanceParameters().cacheWriteMiss << endl;
-    cout << "L1 Evictions: " << l1.getPerformanceParameters().evictions << endl;
-    cout << "VC Swap Requests: " << vc1.getPerformanceParameters().swapRequests << endl;
-    cout << "VC Hits: " << vc1.getPerformanceParameters().cacheHits << endl;
-    cout << "VC Swaps: " << vc1.getPerformanceParameters().swaps << endl;
-    cout << "L2 Reads: " << l2.getPerformanceParameters().cacheReadHits + l2.getPerformanceParameters().cacheReadMiss << endl;
-    cout << "L2 Read Miss: " << l2.getPerformanceParameters().cacheReadMiss << endl;
-    cout << "L2 Writes: " << l2.getPerformanceParameters().cacheWriteHits + l2.getPerformanceParameters().cacheWriteMiss << endl;
-    cout << "L2 Write Miss: " << l2.getPerformanceParameters().cacheWriteMiss << endl;
+    cout << left << setw(50) << "a. number of L1 reads:" << l1.getPerformanceParameters().cacheReadHits + l1.getPerformanceParameters().cacheReadMiss << endl;
+    cout << left << setw(50) << "b. number of L1 read misses:" << l1.getPerformanceParameters().cacheReadMiss << endl;
+    cout << left << setw(50) << "c. number of L1 writes:" << l1.getPerformanceParameters().cacheWriteHits + l1.getPerformanceParameters().cacheWriteMiss << endl;
+    cout << left << setw(50) << "d. number of L1 write misses:" << l1.getPerformanceParameters().cacheWriteMiss << endl;
+    cout << left << setw(50) << "e. number of swap requests:" << vc1.getPerformanceParameters().swapRequests << endl;
+    cout<<fixed<<setprecision(4);
+    cout << left << setw(50) << "f. swap request rate:" << srr << endl;
+    cout << left << setw(50) << "g. number of swaps:" << vc1.getPerformanceParameters().swaps << endl;
+    cout << left << setw(50) << "h. combined L1+VC miss rate:" << mrL1VC << endl;
+    cout << left << setw(50) << "i. number writebacks from L1/VC:" << totalWritesL2 << endl;
+
+    cout << left << setw(50) << "j. number of L2 reads:" << totalReadsL2 << endl;
+    cout << left << setw(50) << "k. number of L2 read misses:" << l2.getPerformanceParameters().cacheReadMiss << endl;
+    cout << left << setw(50) << "l. number of L2 writes:" << totalWritesL2<< endl;
+    cout << left << setw(50) << "m. number of L2 write misses:" << l2.getPerformanceParameters().cacheWriteMiss << endl;
+
+    cout << left << setw(50) << "n. L2 miss rate:" << l2.getPerformanceParameters().cacheReadMiss / (float)totalReadsL2 << endl;
+    cout << left << setw(50) << "o. number of writebacks from L2:" << l2.getPerformanceParameters().writeBack << endl;
+    cout << left << setw(50) << "p. total memory traffic:" << l2.getPerformanceParameters().cacheWriteMiss << endl;
+
 
     return 0;
 }
