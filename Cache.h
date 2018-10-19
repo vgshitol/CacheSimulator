@@ -7,6 +7,7 @@
 
 #include "BitsOffset.h"
 #include <iostream>
+#include <fstream>
 #include <math.h>
 #include "PerformanceParameters.h"
 #include <vector>
@@ -202,14 +203,14 @@ public:
         cout << "Bits of Blocks : " << "Tag Bits: " << this->bitsOffset.tagBits << " \t" <<"Index Bits: " << this->bitsOffset.indexBits << " \t" <<"Block Offset Bits: " << this->bitsOffset.blockOffsetBits << endl;
     }
 
-    void displayTags(){
+    void displayTags(ofstream *outputFile){
         for(unsigned long int setIndex = 0; setIndex < this->tags.size(); setIndex++){
-            cout << "  set" <<right << setw(4) << setIndex << ": ";
+            *outputFile << "  set" <<right << setw(4) << setIndex << ": ";
             for (int assoc = 0; assoc < this->tags[setIndex].size(); ++assoc) {
-                cout <<right << setw(8) << hex << this->tags[setIndex][assoc].tag << " ";
-                this->tags[setIndex][assoc].dirtyBit == true ? cout << "D" : cout<< " ";
+                *outputFile <<right << setw(8) << hex << this->tags[setIndex][assoc].tag << " ";
+                this->tags[setIndex][assoc].dirtyBit == true ? *outputFile << "D" : *outputFile<< " ";
             }
-            cout << dec <<endl;
+            *outputFile << dec <<endl;
         }
     }
 
