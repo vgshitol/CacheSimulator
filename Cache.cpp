@@ -5,6 +5,7 @@
 #include <iostream>
 #include <math.h>
 #include "Cache.h"
+#include <iomanip>
 
 using namespace std;
 
@@ -98,10 +99,10 @@ const PerformanceParameters &Cache::getPerformanceParameters() const {
  */
 void Cache::displayTags() {
     for(unsigned long int setIndex = 0; setIndex < this->tags.size(); setIndex++){
-        cout << "set  " << setIndex << ": ";
+        cout << "  set" <<right << setw(4) << setIndex << ": ";
         for (int assoc = 0; assoc < this->tags[setIndex].size(); ++assoc) {
-             cout << hex << this->tags[setIndex][assoc].tag << " ";
-            this->tags[setIndex][assoc].dirtyBit == true ? cout << " D " : cout<< "   ";
+             cout <<right << setw(8) << hex << this->tags[setIndex][assoc].tag << " ";
+            this->tags[setIndex][assoc].dirtyBit == true ? cout << "D" : cout<< " ";
         }
         cout << dec <<endl;
     }
