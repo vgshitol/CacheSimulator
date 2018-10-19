@@ -9,9 +9,6 @@ CMakeFiles/ECE_563_Project.dir/Cache.cpp.o: ../Cache.cpp
 CMakeFiles/ECE_563_Project.dir/Cache.cpp.o: ../Cache.h
 CMakeFiles/ECE_563_Project.dir/Cache.cpp.o: ../PerformanceParameters.h
 
-CMakeFiles/ECE_563_Project.dir/CacheElements.cpp.o: ../CacheElements.cpp
-CMakeFiles/ECE_563_Project.dir/CacheElements.cpp.o: ../CacheElements.h
-
 CMakeFiles/ECE_563_Project.dir/PerformanceParameters.cpp.o: ../PerformanceParameters.cpp
 CMakeFiles/ECE_563_Project.dir/PerformanceParameters.cpp.o: ../PerformanceParameters.h
 

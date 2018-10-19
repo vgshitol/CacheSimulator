@@ -41,8 +41,10 @@ typedef struct memoryAddress{
 
 
 class Cache {
+
 public:
     unsigned long int countCacheEntry;
+
 private:
     /** get the structure of cache by realising the following parameters **/
     unsigned long int size;
@@ -66,6 +68,7 @@ protected:
 
     bool cacheHit(memory_address memory_address1, char rw);
     cache_interface evictLRU(memory_address memory_address1,  char rw);
+
 public:
     const PerformanceParameters &getPerformanceParameters() const;
 
@@ -82,6 +85,7 @@ public:
     unsigned long int makeAddress(memory_address memory_address1);
     bool swapData(cache_interface cacheInterface1, char rw);
     char dirtyBit2Char(bool dirtyBit);
+    void reorderTags(void);
 
 private:
     void setSets(void);

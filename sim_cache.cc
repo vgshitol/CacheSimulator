@@ -132,14 +132,12 @@ int main (int argc, char* argv[])
             {
 
                 if(cacheInterface1.evictionFlag) {
-//                    cout << "Address Evicted from Cache: " << hex << cacheInterface1.evictedMemoryAddress << dec <<  endl;
                     victim_cache_interface = vc1.rwCache(addr,cacheInterface1.evictedMemoryAddress, cacheInterface1.dirtyBit);
                     cacheInterface2.cacheHit = l1.swapData(victim_cache_interface, rw);
                 }
 
 
                 if((victim_cache_interface.evictionFlag) && (victim_cache_interface.dirtyBit)){
-                    cout << hex <<  victim_cache_interface.evictedMemoryAddress << ":   " << victim_cache_interface.dirtyBit << endl;
                     l2.rwCache(victim_cache_interface.evictedMemoryAddress, 'w');
                 }
 
@@ -180,10 +178,17 @@ int main (int argc, char* argv[])
 //    l2.rwCache(0x13445678);
 //    l2.rwCache(0x12245678);
 //    l2.rwCache(0x13345678);
+//    l1.displayValues();
+    cout << "===== L1 contents =====" << endl;
+    l1.reorderTags();
     l1.displayTags();
-    l1.displayValues();
+    cout << endl;
+    cout << "===== VC contents =====" << endl;
+    vc1.reorderTags();
     vc1.displayTags();
-    l2.displayValues();
+    cout << endl;
+    cout << "===== L2 contents =====" << endl;
+    l2.reorderTags();
     l2.displayTags();
     cout << "L1 Read Hits: " << l1.getPerformanceParameters().cacheReadHits + l1.getPerformanceParameters().cacheReadMiss << endl;
     cout << "L1 Read Miss: " << l1.getPerformanceParameters().cacheReadMiss << endl;

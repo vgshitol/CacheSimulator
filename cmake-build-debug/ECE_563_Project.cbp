@@ -92,12 +92,6 @@
 		<Unit filename="/Users/vishalshitole/Documents/ECE_563_Project/Cache.h">
 			<Option target="ECE_563_Project"/>
 		</Unit>
-		<Unit filename="/Users/vishalshitole/Documents/ECE_563_Project/CacheElements.cpp">
-			<Option target="ECE_563_Project"/>
-		</Unit>
-		<Unit filename="/Users/vishalshitole/Documents/ECE_563_Project/CacheElements.h">
-			<Option target="ECE_563_Project"/>
-		</Unit>
 		<Unit filename="/Users/vishalshitole/Documents/ECE_563_Project/PerformanceParameters.cpp">
 			<Option target="ECE_563_Project"/>
 		</Unit>

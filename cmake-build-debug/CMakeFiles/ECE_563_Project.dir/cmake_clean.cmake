@@ -3,7 +3,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/ECE_563_Project.dir/Cache.cpp.o"
   "CMakeFiles/ECE_563_Project.dir/BitsOffset.cpp.o"
   "CMakeFiles/ECE_563_Project.dir/PerformanceParameters.cpp.o"
-  "CMakeFiles/ECE_563_Project.dir/CacheElements.cpp.o"
   "CMakeFiles/ECE_563_Project.dir/VictimCache.cpp.o"
   "ECE_563_Project.pdb"
   "ECE_563_Project"

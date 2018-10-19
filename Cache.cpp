@@ -97,12 +97,11 @@ const PerformanceParameters &Cache::getPerformanceParameters() const {
  *
  */
 void Cache::displayTags() {
-    unsigned long int temp = 0;
-    bool dirtyBit = 0;
     for(unsigned long int setIndex = 0; setIndex < this->tags.size(); setIndex++){
         cout << "set  " << setIndex << ": ";
         for (int assoc = 0; assoc < this->tags[setIndex].size(); ++assoc) {
-             cout << hex << this->tags[setIndex][assoc].tag << " " <<  this->tags[setIndex][assoc].dirtyBit << " "  ;
+             cout << hex << this->tags[setIndex][assoc].tag << " ";
+            this->tags[setIndex][assoc].dirtyBit == true ? cout << " D " : cout<< "   ";
         }
         cout << dec <<endl;
     }
@@ -253,6 +252,21 @@ char Cache::dirtyBit2Char(bool dirtyBit) {
         return 'w';
 
     return 'r';
+}
+
+void Cache::reorderTags(void) {
+    for(unsigned long int setIndex = 0; setIndex < this->tags.size(); setIndex++){
+        for (int assoc = 0; assoc < this->tags[setIndex].size(); ++assoc) {
+            cache_elements temp;
+            for (int assoc1 = assoc; assoc1 < this->tags[setIndex].size(); ++assoc1) {
+                if(this->tags[setIndex][assoc1].leastRecentlyUsed <= this->tags[setIndex][assoc].leastRecentlyUsed){
+                    temp = tags[setIndex][assoc1];
+                    tags[setIndex][assoc1] = tags[setIndex][assoc];
+                    tags[setIndex][assoc] = temp;
+                }
+            }
+        }
+    }
 }
 
 

@@ -177,33 +177,6 @@ Cache.cpp.s:
 	$(MAKE) -f CMakeFiles/ECE_563_Project.dir/build.make CMakeFiles/ECE_563_Project.dir/Cache.cpp.s
 .PHONY : Cache.cpp.s
 
-CacheElements.o: CacheElements.cpp.o
-
-.PHONY : CacheElements.o
-
-# target to build an object file
-CacheElements.cpp.o:
-	$(MAKE) -f CMakeFiles/ECE_563_Project.dir/build.make CMakeFiles/ECE_563_Project.dir/CacheElements.cpp.o
-.PHONY : CacheElements.cpp.o
-
-CacheElements.i: CacheElements.cpp.i
-
-.PHONY : CacheElements.i
-
-# target to preprocess a source file
-CacheElements.cpp.i:
-	$(MAKE) -f CMakeFiles/ECE_563_Project.dir/build.make CMakeFiles/ECE_563_Project.dir/CacheElements.cpp.i
-.PHONY : CacheElements.cpp.i
-
-CacheElements.s: CacheElements.cpp.s
-
-.PHONY : CacheElements.s
-
-# target to generate assembly for a file
-CacheElements.cpp.s:
-	$(MAKE) -f CMakeFiles/ECE_563_Project.dir/build.make CMakeFiles/ECE_563_Project.dir/CacheElements.cpp.s
-.PHONY : CacheElements.cpp.s
-
 PerformanceParameters.o: PerformanceParameters.cpp.o
 
 .PHONY : PerformanceParameters.o
@@ -300,9 +273,6 @@ help:
 	@echo "... Cache.o"
 	@echo "... Cache.i"
 	@echo "... Cache.s"
-	@echo "... CacheElements.o"
-	@echo "... CacheElements.i"
-	@echo "... CacheElements.s"
 	@echo "... PerformanceParameters.o"
 	@echo "... PerformanceParameters.i"
 	@echo "... PerformanceParameters.s"
