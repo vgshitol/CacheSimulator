@@ -184,12 +184,42 @@ int main (int argc, char* argv[])
     unsigned int totalReadsL1 = l1.getPerformanceParameters().cacheReadHits + l1.getPerformanceParameters().cacheReadMiss;
     unsigned int totalWritesL1 = l1.getPerformanceParameters().cacheWriteHits + l1.getPerformanceParameters().cacheWriteMiss;
     unsigned int totalRequests = totalReadsL1 + totalWritesL1;
-    unsigned int totalReadsL2 = l2.getPerformanceParameters().cacheReadHits + l2.getPerformanceParameters().cacheReadMiss;
-    unsigned int totalWritesL2 = l2.getPerformanceParameters().cacheWriteHits + l2.getPerformanceParameters().cacheWriteMiss;
-    unsigned int totalRequestsL2 = totalReadsL2 + totalWritesL2;
-    float srr = l1.getPerformanceParameters().evictions / (float)totalRequests;
+    float srr = 0;
+    float mrL1VC = 0 ;
+    unsigned int totalReadsL2 = 0;
+    unsigned int  totalWritesL2 = 0;
+    unsigned int totalRequestsL2 = 0;
+    unsigned int totalMemoryTraffic = l1.getPerformanceParameters().cacheReadMiss + l1.getPerformanceParameters().cacheWriteMiss;
+    switch (cacheStructure1){
+        case VICTIMCACHEL1NOL2: {
+            srr = l1.getPerformanceParameters().evictions / (float)totalRequests;
+            mrL1VC = (l1.getPerformanceParameters().cacheReadMiss + l1.getPerformanceParameters().cacheWriteMiss -  vc1.getPerformanceParameters().swaps)/ (float)totalRequests ;
+            totalMemoryTraffic = totalMemoryTraffic - vc1.getPerformanceParameters().swaps + l1.getPerformanceParameters().writeBack;
+            break;
+        }
+        case L2NOVICTIMCACHE:
+        {
+            totalReadsL2 = l2.getPerformanceParameters().cacheReadHits + l2.getPerformanceParameters().cacheReadMiss;
+            totalWritesL2 = l2.getPerformanceParameters().cacheWriteHits + l2.getPerformanceParameters().cacheWriteMiss;
+            totalRequestsL2 = totalReadsL2 + totalWritesL2;
+            totalMemoryTraffic = l2.getPerformanceParameters().cacheReadMiss + l2.getPerformanceParameters().cacheWriteMiss + l2.getPerformanceParameters().writeBack;
+            break;
+        }
 
-    float mrL1VC = (l1.getPerformanceParameters().cacheReadMiss + l1.getPerformanceParameters().cacheWriteMiss -  vc1.getPerformanceParameters().swaps)/ (float)totalRequests ;
+        case VICTIMCACHEL1ANDL2:
+        {
+            srr = vc1.getPerformanceParameters().swapRequests / (float)totalRequests;
+            mrL1VC = (l1.getPerformanceParameters().cacheReadMiss + l1.getPerformanceParameters().cacheWriteMiss -  vc1.getPerformanceParameters().swaps)/ (float)totalRequests ;
+            totalReadsL2 = l2.getPerformanceParameters().cacheReadHits + l2.getPerformanceParameters().cacheReadMiss;
+            totalWritesL2 = l2.getPerformanceParameters().cacheWriteHits + l2.getPerformanceParameters().cacheWriteMiss;
+            totalRequestsL2 = totalReadsL2 + totalWritesL2;
+            totalMemoryTraffic = l2.getPerformanceParameters().cacheReadMiss + l2.getPerformanceParameters().cacheWriteMiss + l2.getPerformanceParameters().writeBack;
+            break;
+        }
+        default: break;
+    }
+
+
     cout << "===== L1 contents =====" << endl;
     l1.reorderTags();
     l1.displayTags();
@@ -201,9 +231,10 @@ int main (int argc, char* argv[])
     cout << "===== L2 contents =====" << endl;
     l2.reorderTags();
     l2.displayTags();
-    cout << left << setw(50) << "a. number of L1 reads:" << l1.getPerformanceParameters().cacheReadHits + l1.getPerformanceParameters().cacheReadMiss << endl;
+
+    cout << left << setw(50) << "a. number of L1 reads:" << totalReadsL1 << endl;
     cout << left << setw(50) << "b. number of L1 read misses:" << l1.getPerformanceParameters().cacheReadMiss << endl;
-    cout << left << setw(50) << "c. number of L1 writes:" << l1.getPerformanceParameters().cacheWriteHits + l1.getPerformanceParameters().cacheWriteMiss << endl;
+    cout << left << setw(50) << "c. number of L1 writes:" << totalWritesL1 << endl;
     cout << left << setw(50) << "d. number of L1 write misses:" << l1.getPerformanceParameters().cacheWriteMiss << endl;
     cout << left << setw(50) << "e. number of swap requests:" << vc1.getPerformanceParameters().swapRequests << endl;
     cout<<fixed<<setprecision(4);
@@ -219,7 +250,7 @@ int main (int argc, char* argv[])
 
     cout << left << setw(50) << "n. L2 miss rate:" << l2.getPerformanceParameters().cacheReadMiss / (float)totalReadsL2 << endl;
     cout << left << setw(50) << "o. number of writebacks from L2:" << l2.getPerformanceParameters().writeBack << endl;
-    cout << left << setw(50) << "p. total memory traffic:" << l2.getPerformanceParameters().cacheWriteMiss << endl;
+    cout << left << setw(50) << "p. total memory traffic:" << totalMemoryTraffic << endl;
 
 
     return 0;

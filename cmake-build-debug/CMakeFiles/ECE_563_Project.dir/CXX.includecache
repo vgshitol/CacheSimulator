@@ -8,14 +8,6 @@
 
 /Users/vishalshitole/Documents/ECE_563_Project/BitsOffset.h
 
-/Users/vishalshitole/Documents/ECE_563_Project/Cache.cpp
-iostream
--
-math.h
--
-Cache.h
-/Users/vishalshitole/Documents/ECE_563_Project/Cache.h
-
 /Users/vishalshitole/Documents/ECE_563_Project/Cache.h
 BitsOffset.h
 /Users/vishalshitole/Documents/ECE_563_Project/BitsOffset.h
@@ -25,4 +17,28 @@ vector
 -
 
 /Users/vishalshitole/Documents/ECE_563_Project/PerformanceParameters.h
+
+/Users/vishalshitole/Documents/ECE_563_Project/VictimCache.h
+Cache.h
+/Users/vishalshitole/Documents/ECE_563_Project/Cache.h
+
+/Users/vishalshitole/Documents/ECE_563_Project/sim_cache.cc
+iostream
+-
+stdio.h
+-
+stdlib.h
+-
+sim_cache.h
+/Users/vishalshitole/Documents/ECE_563_Project/sim_cache.h
+Cache.h
+/Users/vishalshitole/Documents/ECE_563_Project/Cache.h
+VictimCache.h
+/Users/vishalshitole/Documents/ECE_563_Project/VictimCache.h
+typeinfo
+-
+iomanip
+-
+
+/Users/vishalshitole/Documents/ECE_563_Project/sim_cache.h
 
