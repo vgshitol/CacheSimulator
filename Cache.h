@@ -205,7 +205,7 @@ public:
     void displayTags(){
         for(unsigned long int setIndex = 0; setIndex < this->tags.size(); setIndex++){
             cout << "  set" <<right << setw(4) << setIndex << ": ";
-            for (int assoc = 0; assoc < this->tags[setIndex].size(); ++assoc) {
+            for (unsigned long int assoc = 0; assoc < this->tags[setIndex].size(); ++assoc) {
                 cout <<right << setw(8) << hex << this->tags[setIndex][assoc].tag << " ";
                 this->tags[setIndex][assoc].dirtyBit == true ? cout << "D" : cout<< " ";
             }
@@ -263,9 +263,9 @@ public:
 
     void reorderTags(void){
         for(unsigned long int setIndex = 0; setIndex < this->tags.size(); setIndex++){
-            for (int assoc = 0; assoc < this->tags[setIndex].size(); ++assoc) {
+            for (unsigned long int assoc = 0; assoc < this->tags[setIndex].size(); ++assoc) {
                 cache_elements temp;
-                for (int assoc1 = assoc; assoc1 < this->tags[setIndex].size(); ++assoc1) {
+                for (unsigned long int assoc1 = assoc; assoc1 < this->tags[setIndex].size(); ++assoc1) {
                     if(this->tags[setIndex][assoc1].leastRecentlyUsed <= this->tags[setIndex][assoc].leastRecentlyUsed){
                         temp = tags[setIndex][assoc1];
                         tags[setIndex][assoc1] = tags[setIndex][assoc];
@@ -306,9 +306,9 @@ private:
     void assignArrayValues(void){
         unsigned long int maxLRUValue = this->associativity-1;
         this->tags.resize(this->sets);
-        for (int set = 0; set < this->sets; ++set) {
+        for (unsigned long int set = 0; set < this->sets; ++set) {
             this->tags[set].resize(this->associativity);
-            for (int assoc = 0; assoc < this->associativity; ++assoc) {
+            for (unsigned long int assoc = 0; assoc < this->associativity; ++assoc) {
                 this->tags[set][assoc].leastRecentlyUsed = maxLRUValue;
             }
         }

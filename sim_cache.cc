@@ -198,16 +198,6 @@ int main (int argc, char* argv[])
         default: break;
     }
 
-    cout << "===== Simulator configuration ====="
-          "\n  BLOCKSIZE:                     "<< params.block_size <<
-          "\n  L1_SIZE:                          "<< params.l1_size <<
-          "\n  L1_ASSOC:                         "<<params.l1_assoc <<
-          "\n  VC_NUM_BLOCKS:                    " <<params.vc_num_blocks <<
-          "\n  L2_SIZE:                          " <<params.l2_size <<
-          "\n  L2_ASSOC:                         " <<params.l2_assoc <<
-          "\n  trace_file:                       " <<trace_file <<
-          "\n" << endl;
-
     cout << "===== L1 contents =====" << endl;
     l1.reorderTags();
     l1.displayTags();
