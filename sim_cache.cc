@@ -6,7 +6,6 @@
 #include "VictimCache.h"
 #include <typeinfo>
 #include <iomanip>
-#include <fstream>
 
 using namespace std;
 /*  argc holds the number of command line arguments
@@ -140,11 +139,9 @@ int main (int argc, char* argv[])
                     cacheInterface2.cacheHit = l1.swapData(victim_cache_interface, rw);
                 }
 
-
                 if((victim_cache_interface.evictionFlag) && (victim_cache_interface.dirtyBit)){
                     l2.rwCache(victim_cache_interface.evictedMemoryAddress, 'w');
                 }
-
 
                 if(!cacheInterface2.cacheHit && !cacheInterface1.cacheHit) {
                     l2.rwCache(addr, 'r');
@@ -201,10 +198,7 @@ int main (int argc, char* argv[])
         default: break;
     }
 
-    ofstream simulationResults;
-    simulationResults.open("simulation.txt", ios::out);
-
-  simulationResults << "===== Simulator configuration ====="
+    cout << "===== Simulator configuration ====="
           "\n  BLOCKSIZE:                     "<< params.block_size <<
           "\n  L1_SIZE:                          "<< params.l1_size <<
           "\n  L1_ASSOC:                         "<<params.l1_assoc <<
@@ -214,42 +208,39 @@ int main (int argc, char* argv[])
           "\n  trace_file:                       " <<trace_file <<
           "\n" << endl;
 
-    simulationResults << "===== L1 contents =====" << endl;
+    cout << "===== L1 contents =====" << endl;
     l1.reorderTags();
-    l1.displayTags(&simulationResults);
-    simulationResults << endl;
-    simulationResults << "===== VC contents =====" << endl;
+    l1.displayTags();
+    cout << endl;
+    cout << "===== VC contents =====" << endl;
     vc1.reorderTags();
-    vc1.displayTags(&simulationResults);
-    simulationResults << endl;
-    simulationResults << "===== L2 contents =====" << endl;
+    vc1.displayTags();
+    cout << endl;
+    cout << "===== L2 contents =====" << endl;
     l2.reorderTags();
-    l2.displayTags(&simulationResults);
+    l2.displayTags();
 
-    simulationResults << endl;
-    simulationResults << "===== Simulation results =====" << endl;
-    simulationResults << left << setw(42) << "  a. number of L1 reads:" << right << setw(10)<< totalReadsL1 << endl;
-    simulationResults << left << setw(42) << "  b. number of L1 read misses:"<< right << setw(10) << l1.getPerformanceParameters().cacheReadMiss << endl;
-    simulationResults << left << setw(42) << "  c. number of L1 writes:" << right << setw(10)<< totalWritesL1 << endl;
-    simulationResults << left << setw(42) << "  d. number of L1 write misses:" << right << setw(10)<< l1.getPerformanceParameters().cacheWriteMiss << endl;
-    simulationResults << left << setw(42) << "  e. number of swap requests:" << right << setw(10)<< vc1.getPerformanceParameters().swapRequests << endl;
-    simulationResults<<fixed<<setprecision(4);
-    simulationResults << left << setw(42) << "  f. swap request rate:" << right << setw(10)<< srr << endl;
-    simulationResults << left << setw(42) << "  g. number of swaps:" << right << setw(10)<< vc1.getPerformanceParameters().swaps << endl;
-    simulationResults << left << setw(42) << "  h. combined L1+VC miss rate:" << right << setw(10)<< mrL1VC << endl;
-    simulationResults << left << setw(42) << "  i. number writebacks from L1/VC:" << right << setw(10)<< wbL1VC << endl;
+    cout << endl;
+    cout << "===== Simulation results =====" << endl;
+    cout << left << setw(42) << "  a. number of L1 reads:" << right << setw(10)<< totalReadsL1 << endl;
+    cout << left << setw(42) << "  b. number of L1 read misses:"<< right << setw(10) << l1.getPerformanceParameters().cacheReadMiss << endl;
+    cout << left << setw(42) << "  c. number of L1 writes:" << right << setw(10)<< totalWritesL1 << endl;
+    cout << left << setw(42) << "  d. number of L1 write misses:" << right << setw(10)<< l1.getPerformanceParameters().cacheWriteMiss << endl;
+    cout << left << setw(42) << "  e. number of swap requests:" << right << setw(10)<< vc1.getPerformanceParameters().swapRequests << endl;
+    cout<<fixed<<setprecision(4);
+    cout << left << setw(42) << "  f. swap request rate:" << right << setw(10)<< srr << endl;
+    cout << left << setw(42) << "  g. number of swaps:" << right << setw(10)<< vc1.getPerformanceParameters().swaps << endl;
+    cout << left << setw(42) << "  h. combined L1+VC miss rate:" << right << setw(10)<< mrL1VC << endl;
+    cout << left << setw(42) << "  i. number writebacks from L1/VC:" << right << setw(10)<< wbL1VC << endl;
 
-    simulationResults << left << setw(42) << "  j. number of L2 reads:" << right << setw(10)<< totalReadsL2 << endl;
-    simulationResults << left << setw(42) << "  k. number of L2 read misses:" << right << setw(10)<< l2.getPerformanceParameters().cacheReadMiss << endl;
-    simulationResults << left << setw(42) << "  l. number of L2 writes:" << right << setw(10)<< totalWritesL2<< endl;
-    simulationResults << left << setw(42) << "  m. number of L2 write misses:" << right << setw(10)<< l2.getPerformanceParameters().cacheWriteMiss << endl;
+    cout << left << setw(42) << "  j. number of L2 reads:" << right << setw(10)<< totalReadsL2 << endl;
+    cout << left << setw(42) << "  k. number of L2 read misses:" << right << setw(10)<< l2.getPerformanceParameters().cacheReadMiss << endl;
+    cout << left << setw(42) << "  l. number of L2 writes:" << right << setw(10)<< totalWritesL2<< endl;
+    cout << left << setw(42) << "  m. number of L2 write misses:" << right << setw(10)<< l2.getPerformanceParameters().cacheWriteMiss << endl;
 
-    simulationResults << left << setw(42) << "  n. L2 miss rate:"<< right << setw(10) << mrL2 << endl;
-    simulationResults << left << setw(42) << "  o. number of writebacks from L2:" << right << setw(10)<< l2.getPerformanceParameters().writeBack << endl;
-    simulationResults << left << setw(42) << "  p. total memory traffic:" << right << setw(10)<< totalMemoryTraffic << endl;
-
-//    simulationResults << "Writing this to a file.\n";
-    simulationResults.close();
+    cout << left << setw(42) << "  n. L2 miss rate:"<< right << setw(10) << mrL2 << endl;
+    cout << left << setw(42) << "  o. number of writebacks from L2:" << right << setw(10)<< l2.getPerformanceParameters().writeBack << endl;
+    cout << left << setw(42) << "  p. total memory traffic:" << right << setw(10)<< totalMemoryTraffic << endl;
 
     return 0;
 }
