@@ -42,7 +42,7 @@ int main (int argc, char* argv[])
         printf("Error: Expected inputs:7 Given inputs:%d\n", argc-1);
         exit(EXIT_FAILURE);
     }
-    
+
     // strtoul() converts char* to unsigned long. It is included in <stdlib.h>
     params.block_size       = strtoul(argv[1], NULL, 10);
     params.l1_size          = strtoul(argv[2], NULL, 10);
@@ -63,7 +63,7 @@ int main (int argc, char* argv[])
 
     // Print params
     printf( "===== Simulator configuration =====\n"
-                               "  L1_BLOCKSIZE:                     %lu\n"
+                               "  BLOCKSIZE:                        %lu\n"
                                "  L1_SIZE:                          %lu\n"
                                "  L1_ASSOC:                         %lu\n"
                                "  VC_NUM_BLOCKS:                    %lu\n"
@@ -202,15 +202,20 @@ int main (int argc, char* argv[])
     l1.reorderTags();
     l1.displayTags();
     cout << endl;
-    cout << "===== VC contents =====" << endl;
-    vc1.reorderTags();
-    vc1.displayTags();
-    cout << endl;
-    cout << "===== L2 contents =====" << endl;
-    l2.reorderTags();
-    l2.displayTags();
+    if(params.vc_num_blocks != 0) {
+        cout << "===== VC contents =====" << endl;
+        vc1.reorderTags();
+        vc1.displayTags();
+        cout << endl;
+    }
 
-    cout << endl;
+    if(params.l2_size != 0) {
+        cout << "===== L2 contents =====" << endl;
+        l2.reorderTags();
+        l2.displayTags();
+        cout << endl;
+    }
+
     cout << "===== Simulation results =====" << endl;
     cout << left << setw(42) << "  a. number of L1 reads:" << right << setw(10)<< totalReadsL1 << endl;
     cout << left << setw(42) << "  b. number of L1 read misses:"<< right << setw(10) << l1.getPerformanceParameters().cacheReadMiss << endl;
