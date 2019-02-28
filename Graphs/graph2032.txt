@@ -1,0 +1,29 @@
+===== Simulator configuration =====
+  BLOCKSIZE:                        32
+  L1_SIZE:                          1024
+  L1_ASSOC:                         32
+  VC_NUM_BLOCKS:                    0
+  L2_SIZE:                          0
+  L2_ASSOC:                         0
+  trace_file:                       gcc_trace.txt
+
+===== L1 contents =====
+  set   0:  2001c11 D 200009b   200009a   2000099   2000098   2000097   2000096   2000095   20028d0 D 2002232 D 20028d2 D 2001f8f D 2002412   200214a   20017a5   20018f4 D 20018a3   2001c12   2001ac7   3d819c8 D 20028d1 D 2001531 D 20018a0   20018a2   2000fa5   2000f94   20017a4 D 20028cf D 20018fc D 20018a4   2000fa7   2000f96  
+
+===== Simulation results =====
+  a. number of L1 reads:                       63640
+  b. number of L1 read misses:                  8099
+  c. number of L1 writes:                      36360
+  d. number of L1 write misses:                 5597
+  e. number of swap requests:                      0
+  f. swap request rate:                       0.0000
+  g. number of swaps:                              0
+  h. combined L1+VC miss rate:                0.1370
+  i. number writebacks from L1/VC:              6442
+  j. number of L2 reads:                           0
+  k. number of L2 read misses:                     0
+  l. number of L2 writes:                          0
+  m. number of L2 write misses:                    0
+  n. L2 miss rate:                            0.0000
+  o. number of writebacks from L2:                 0
+  p. total memory traffic:                     20138

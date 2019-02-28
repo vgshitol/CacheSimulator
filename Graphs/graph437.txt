@@ -1,0 +1,44 @@
+===== Simulator configuration =====
+  BLOCKSIZE:                        128
+  L1_SIZE:                          8192
+  L1_ASSOC:                         4
+  VC_NUM_BLOCKS:                    0
+  L2_SIZE:                          0
+  L2_ASSOC:                         0
+  trace_file:                       gcc_trace.txt
+
+===== L1 contents =====
+  set   0:    8006b D   80066 D   8007d D   8007e D
+  set   1:    8006b D   800a3 D   80079 D   8006f D
+  set   2:    80085 D   f6067 D   8007f D   800a3 D
+  set   3:    8007e D   800a3 D   8007d D   8006a D
+  set   4:    80070 D   800a3 D   80090     80052  
+  set   5:    80002     8003e     800a3 D   80052  
+  set   6:    80002     8003e     80052     800a3 D
+  set   7:    80063 D   800a3 D   8006b D   8006a D
+  set   8:    80062     800a3 D   8005e D   800a8 D
+  set   9:    8005e D   8003e     80062     800a3 D
+  set  10:    8003e     8004e     8006c D   8006a  
+  set  11:    8004e     8007c     8006a     80062 D
+  set  12:    80088 D   80054 D   8004e     8003e  
+  set  13:    80063 D   8008f     8006e D   8007c D
+  set  14:    8006a D   8005e D   8008f     80063 D
+  set  15:    80063 D   8006a D   8008f     80065 D
+
+===== Simulation results =====
+  a. number of L1 reads:                       63640
+  b. number of L1 read misses:                  3101
+  c. number of L1 writes:                      36360
+  d. number of L1 write misses:                 1734
+  e. number of swap requests:                      0
+  f. swap request rate:                       0.0000
+  g. number of swaps:                              0
+  h. combined L1+VC miss rate:                0.0483
+  i. number writebacks from L1/VC:              2092
+  j. number of L2 reads:                           0
+  k. number of L2 read misses:                     0
+  l. number of L2 writes:                          0
+  m. number of L2 write misses:                    0
+  n. L2 miss rate:                            0.0000
+  o. number of writebacks from L2:                 0
+  p. total memory traffic:                      6927
