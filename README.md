@@ -1,6 +1,6 @@
-### Build
+### 1. Build
 
-`1. Type "make" to build.  (Type "make clean" first if you already compiled and want to recompile from scratch.)`
+`Type "make" to build.  (Type "make clean" first if you already compiled and want to recompile from scratch.)`
 
 ### 2. Run trace reader:
 ```
