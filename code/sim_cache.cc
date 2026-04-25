@@ -27,6 +27,21 @@ enum cacheStructure {
     VICTIMCACHEL1ANDL2
 };
 
+static bool isPowerOfTwo(unsigned long value) {
+    return value != 0 && (value & (value - 1)) == 0;
+}
+
+static bool isValidConfiguration(const cache_params& params) {
+    if (!isPowerOfTwo(params.block_size)) return false;
+    if (!isPowerOfTwo(params.l1_size) || !isPowerOfTwo(params.l1_assoc)) return false;
+    if (params.l1_assoc > params.l1_size / params.block_size) return false;
+    if (params.l2_size != 0) {
+        if (!isPowerOfTwo(params.l2_size) || !isPowerOfTwo(params.l2_assoc)) return false;
+        if (params.l2_assoc > params.l2_size / params.block_size) return false;
+    }
+    return true;
+}
+
 int main (int argc, char* argv[])
 {
     FILE *FP;               // File handler
@@ -51,6 +66,11 @@ int main (int argc, char* argv[])
     params.l2_size          = strtoul(argv[5], NULL, 10);
     params.l2_assoc         = strtoul(argv[6], NULL, 10);
     trace_file              = argv[7];
+
+    if (!isValidConfiguration(params)) {
+        printf("Error: Invalid cache configuration. Please check power-of-two and associativity constraints.\n");
+        exit(EXIT_FAILURE);
+    }
 
     // Open trace_file in read mode
     FP = fopen(trace_file, "r");
@@ -163,7 +183,6 @@ int main (int argc, char* argv[])
     unsigned int wbL1VC = l1.getPerformanceParameters().writeBack;
     unsigned int totalReadsL2 = 0;
     unsigned int  totalWritesL2 = 0;
-    unsigned int totalRequestsL2 = 0;
     unsigned int totalMemoryTraffic = l1.getPerformanceParameters().cacheReadMiss + l1.getPerformanceParameters().cacheWriteMiss + l1.getPerformanceParameters().writeBack;
     switch (cacheStructure1){
         case VICTIMCACHEL1NOL2: {
@@ -177,8 +196,7 @@ int main (int argc, char* argv[])
         {
             totalReadsL2 = l2.getPerformanceParameters().cacheReadHits + l2.getPerformanceParameters().cacheReadMiss;
             totalWritesL2 = l2.getPerformanceParameters().cacheWriteHits + l2.getPerformanceParameters().cacheWriteMiss;
-            totalRequestsL2 = totalReadsL2 + totalWritesL2;
-            mrL2 =  l2.getPerformanceParameters().cacheReadMiss / (float)totalReadsL2;
+            mrL2 = (totalReadsL2 == 0) ? 0 : l2.getPerformanceParameters().cacheReadMiss / (float)totalReadsL2;
             totalMemoryTraffic = l2.getPerformanceParameters().cacheReadMiss + l2.getPerformanceParameters().cacheWriteMiss + l2.getPerformanceParameters().writeBack;
             break;
         }
@@ -190,8 +208,7 @@ int main (int argc, char* argv[])
             mrL1VC = (l1.getPerformanceParameters().cacheReadMiss + l1.getPerformanceParameters().cacheWriteMiss -  vc1.getPerformanceParameters().swaps)/ (float)totalRequests ;
             totalReadsL2 = l2.getPerformanceParameters().cacheReadHits + l2.getPerformanceParameters().cacheReadMiss;
             totalWritesL2 = l2.getPerformanceParameters().cacheWriteHits + l2.getPerformanceParameters().cacheWriteMiss;
-            totalRequestsL2 = totalReadsL2 + totalWritesL2;
-            mrL2 =  l2.getPerformanceParameters().cacheReadMiss / (float)totalReadsL2;
+            mrL2 = (totalReadsL2 == 0) ? 0 : l2.getPerformanceParameters().cacheReadMiss / (float)totalReadsL2;
             totalMemoryTraffic = l2.getPerformanceParameters().cacheReadMiss + l2.getPerformanceParameters().cacheWriteMiss + l2.getPerformanceParameters().writeBack;
             break;
         }

@@ -1,0 +1,5 @@
+code/sim_cache
+code/*.o
+
+# macOS/editor noise
+.DS_Store
